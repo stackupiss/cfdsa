@@ -5,7 +5,7 @@ const PORT = parseInt(process.argv[2] || process.env.APP_PORT) || 3000
 
 const app = express()
 
-app.get('/healthz', (req, resp) => {
+app.get([ '/health', '/healthz' ], (req, resp) => {
 	resp.status(200).type('text/html').end('OK')
 })
 
