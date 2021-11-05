@@ -4,13 +4,13 @@ docker-machine create \
 	--driver digitalocean \
 	--digitalocean-access-token $DO_TOKEN \
 	--digitalocean-size s-1vcpu-1gb-amd \
-   --digitalocean-image ubuntu-20-04-x64 \
+	--digitalocean-image ubuntu-20-04-x64 \
 	--digitalocean-region sgp1 \
-	--engine-install-url "https://github.com/stackupiss/cfdsa/blob/master/setup/19.03.9.sh" \
+	--engine-install-url "https://releases.rancher.com/install-docker/19.03.9.sh" \
 	mydocker
 
 ###
-# --engine-install-url "https://releases.rancher.com/install-docker/19.03.9.sh" \
+# --engine-install-url "https://raw.githubusercontent.com/stackupiss/cfdsa/master/setup/19.03.9.sh" \
 # Options
 # --digitalocean-access-token: required. Your personal access token for the Digital Ocean API.
 # --digitalocean-backups: Enable Digital Ocean backups for the droplet.
