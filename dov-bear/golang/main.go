@@ -56,8 +56,16 @@ func main() {
 		log.Fatalf("Strange, cannot get current directory: %v\n", err)
 		os.Exit(1)
 	} else {
-		r.Static("/", fmt.Sprintf("%s/public", dirname))
+		staticDir := fmt.Sprintf("%s/static", dirname)
+		if _, err := os.Stat(staticDir); os.IsNotExist(err) {
+			log.Fatalf("Static asset directory does not exists: %s\n%v\n", staticDir, err)
+		}
+		r.Static("/static", staticDir)
 	}
+
+	r.GET("/healthz", func(c *gin.Context) {
+		c.JSON(204, gin.H{})
+	})
 
 	fmt.Printf("Starting application at %s on port %d\n", time.Now().UTC().String(), opt.port)
 
