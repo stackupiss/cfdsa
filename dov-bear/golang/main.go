@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"strconv"
 	"time"
@@ -15,6 +16,26 @@ type CliOpt struct {
 	port int
 	name string
 	hash string
+}
+
+func randImages(count int) []int {
+
+	var num [14]int
+
+	rand.Seed(time.Now().UnixNano())
+
+	for i := 0; i < 14; i++ {
+		num[i] = i
+	}
+
+	for i := 0; i < len(num); i++ {
+		tmp := num[i]
+		p := rand.Intn(len(num))
+		num[i] = num[p]
+		num[p] = tmp
+	}
+
+	return num[0:count]
 }
 
 func parseCommandLine() CliOpt {
@@ -47,6 +68,8 @@ func parseCommandLine() CliOpt {
 }
 
 func main() {
+
+	fmt.Printf(">>> num: %v\n", randImages(4))
 
 	opt := parseCommandLine()
 
