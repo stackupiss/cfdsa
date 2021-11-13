@@ -1,7 +1,7 @@
 const { join } = require('path')
 const morgan = require('morgan')
 const rp = require('request-promise')
-const hbs = require('express-handlebars')
+const { engine } = require('express-handlebars')
 const express = require('express')
 
 const app = express()
@@ -14,7 +14,7 @@ const APP_PORT = parseInt(process.argv[2]) || parseInt(process.env.APP_PORT) || 
 const APP_ID = process.env.APP_ID || 'not set'
 const DEFAULT_CITY = process.env.APP_DEFAULT_CITY 
 
-app.engine('hbs', hbs())
+app.engine('hbs', engine())
 app.set('view engine', 'hbs')
 app.set('views', join(__dirname, 'views'))
 
