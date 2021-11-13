@@ -5,11 +5,20 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"net/http"
 	"os"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
+)
+
+const (
+	DIR_PUBLIC        = "public"
+	DIR_TEMPLATES     = "templates"
+	ENV_INSTANCE_NAME = "INSTANCE_NAME"
+	ENV_INSTANCE_HASH = "INSTANCE_HASH"
+	ENV_PORT          = "PORT"
 )
 
 type CliOpt struct {
@@ -18,7 +27,7 @@ type CliOpt struct {
 	hash string
 }
 
-func randImages(count int) []int {
+func randNums(count int) []int {
 
 	var num [14]int
 
@@ -44,7 +53,7 @@ func parseCommandLine() CliOpt {
 	var name string
 	var hash string
 
-	p := os.Getenv("PORT")
+	p := os.Getenv(ENV_PORT)
 	if "" == p {
 		port = 3000
 	} else {
@@ -56,8 +65,8 @@ func parseCommandLine() CliOpt {
 		}
 	}
 
-	name = os.Getenv("INSTANCE_NAME")
-	hash = os.Getenv("INSTANCE_HASH")
+	name = os.Getenv(ENV_INSTANCE_NAME)
+	hash = os.Getenv(ENV_INSTANCE_HASH)
 
 	flag.IntVar(&port, "port", port, "port to listen to")
 	flag.StringVar(&name, "name", name, "set the instance name")
@@ -67,28 +76,52 @@ func parseCommandLine() CliOpt {
 	return CliOpt{port, name, hash}
 }
 
-func main() {
+func getPath(path string) (*string, error) {
+	dirname, err := os.Getwd()
+	if nil != err {
+		return nil, err
+	}
+	fullPath := fmt.Sprintf("%s/%s", dirname, path)
+	if _, err = os.Stat(fullPath); os.IsNotExist(err) {
+		return nil, err
+	}
+	return &fullPath, nil
+}
 
-	fmt.Printf(">>> num: %v\n", randImages(4))
+func main() {
 
 	opt := parseCommandLine()
 
 	r := gin.Default()
 
-	if dirname, err := os.Getwd(); nil != err {
-		log.Fatalf("Strange, cannot get current directory: %v\n", err)
+	staticDir, err := getPath(DIR_PUBLIC)
+	if nil != err {
+		log.Fatalf("Cannot find 'public' directory: %v\n", err)
 		os.Exit(1)
-	} else {
-		staticDir := fmt.Sprintf("%s/static", dirname)
-		if _, err := os.Stat(staticDir); os.IsNotExist(err) {
-			log.Fatalf("Static asset directory does not exists: %s\n%v\n", staticDir, err)
-		}
-		r.Static("/static", staticDir)
 	}
+	r.Static("/static", *staticDir)
+
+	templateDir, err := getPath(DIR_TEMPLATES)
+	if nil != err {
+		log.Fatalf("Cannot find 'templates' directory: %v\n", err)
+		os.Exit(1)
+	}
+	r.LoadHTMLGlob(fmt.Sprintf("%s/*", *templateDir))
 
 	r.GET("/healthz", func(c *gin.Context) {
 		c.JSON(204, gin.H{})
 	})
+
+	f := func(c *gin.Context) {
+		dovs := randNums(4)
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"instanceName": opt.name,
+			"instanceHash": opt.hash,
+			"dovs":         dovs,
+		})
+	}
+	r.GET("/", f)
+	r.GET("/index.html", f)
 
 	fmt.Printf("Starting application at %s on port %d\n", time.Now().UTC().String(), opt.port)
 
