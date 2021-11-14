@@ -2,7 +2,7 @@ const { join } = require('path')
 const morgan = require('morgan')
 const fortune = require('fortune-cookie')
 const express = require('express')
-const hbs = require('express-handlebars')
+const { create } = require('express-handlebars')
 
 const PORT = parseInt(process.argv[2] || process.env.APP_PORT || 3000)
 const FORTUNES = fortune.length;
@@ -14,7 +14,7 @@ const getFortune = () => {
 
 const app = express();
 
-app.engine('hbs', hbs());
+app.engine('hbs', create().engine);
 app.set('view engine', 'hbs')
 
 app.use(morgan('tiny'))

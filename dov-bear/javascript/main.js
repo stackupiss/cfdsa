@@ -1,6 +1,6 @@
 const cliOptions = require('command-line-args')
 const morgan = require('morgan')
-const hbs = require('express-handlebars')
+const { create } = require('express-handlebars')
 const express = require('express')
 
 const rnd = (range = 14, total = 4) => {
@@ -40,7 +40,7 @@ const instanceHash = opt['hash'] || process.env.INSTANCE_HASH || ''
 
 const app = express()
 
-app.engine('hbs', hbs({ defaultLayout: 'main.hbs' }))
+app.engine('hbs', create({ defaultLayout: 'main.hbs' }).engine)
 app.set('view engine', 'hbs')
 
 app.use(morgan('common'))
