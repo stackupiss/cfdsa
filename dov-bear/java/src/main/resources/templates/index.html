@@ -3,18 +3,16 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Dov Bear</title>
-		<link rel="stylesheet" href="/static/style.css">
+		<link rel="stylesheet" href="/style.css">
 	</head>
 	<body>
 		<div class="center-it">
-			<h1><code>{{ .instanceName }} {{ .instanceHash }}</code></h1>
+			<h1><code data-th-text="|${instanceName} ${instanceHash}|"></code></h1>
 		</div>
 
-		{{ range .dovs }}
-			<div class="center-it">
-				<img src="/static/images/dov{{ . }}.gif">
-			</div>
-		{{ end }}
+		<div class="center-it" data-th-each="url: ${dovs}">
+			<img data-th-src="@{${url}}">
+		</div>
 
 	</body>
 </html>

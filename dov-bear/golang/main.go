@@ -113,7 +113,11 @@ func main() {
 	})
 
 	f := func(c *gin.Context) {
-		dovs := randNums(4)
+		num, err := strconv.Atoi(c.DefaultQuery("num", "4"))
+		if nil != err {
+			num = 4
+		}
+		dovs := randNums(num)
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"instanceName": opt.name,
 			"instanceHash": opt.hash,
