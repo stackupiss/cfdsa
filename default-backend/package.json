@@ -1,5 +1,5 @@
 {
-  "name": "default_backend",
+  "name": "default-backend",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
@@ -10,6 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "join": "^3.0.0"
+    "morgan": "^1.10.0"
   }
 }
